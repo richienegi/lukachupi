@@ -1,4 +1,4 @@
-package com.negi.ritika.setwallpaper;
+package com.negi.ritika.setwallpaper.Activity;
 
 import android.Manifest;
 import android.app.ProgressDialog;
@@ -25,7 +25,9 @@ import android.widget.Toast;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.negi.ritika.setwallpaper.classData.All_Images;
+import com.negi.ritika.setwallpaper.Fragment.ImagePreview;
+import com.negi.ritika.setwallpaper.R;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.File;
@@ -36,18 +38,18 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
-public class PostDetailActivity extends AppCompatActivity implements Preview.OnFragmentInteractionListener {
+public class PostDetailActivity extends AppCompatActivity implements ImagePreview.OnFragmentInteractionListener {
     TextView mtitle;
-    ImageView mdImage;
-    CardView ci;
-    Button msave, mshare, mwall;
-    Bitmap bitmap;
+    private ImageView mdImage;
+    private CardView ci;
+    private Button msave, mshare, mwall;
+    private Bitmap bitmap;
     public static final int WRITE_EXTERNAL_STORAGE_CODE = 1;
-    String url, id, cat, downloads;
+    private String url, id, cat, downloads, uid;
 
-    DatabaseReference ref;
+    private DatabaseReference ref;
 
-    Toolbar tb;
+    private Toolbar tb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,15 +70,28 @@ public class PostDetailActivity extends AppCompatActivity implements Preview.OnF
         id = getIntent().getStringExtra("id");
         cat = getIntent().getStringExtra("cate");
         downloads = getIntent().getStringExtra("downloads");
+        uid = getIntent().getStringExtra("uid");
 
-        ref = FirebaseDatabase.getInstance().getReference("uploads").child(cat).child(id);
+        ref = FirebaseDatabase.getInstance().getReference("uploads").child(cat).child(uid).child(id);
 
-        //Log.d("datachecked",url);
-        Picasso.with(this).load(url).placeholder(R.drawable.download).into(mdImage);
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setCancelable(false);
+        pd.setMessage("Wait...");
+        pd.show();
+        Picasso.with(this).load(url).fetch(new Callback() {
+            @Override
+            public void onSuccess() {
+                mdImage.setAlpha(0f);
+                pd.dismiss();
+                Picasso.with(PostDetailActivity.this).load(url).into(mdImage);
+                mdImage.animate().setDuration(400).alpha(1f).start();
+            }
 
+            @Override
+            public void onError() {
 
-//getImage From Imageview as BitMap
-        bitmap = ((BitmapDrawable) mdImage.getDrawable()).getBitmap();
+            }
+        });
 
 
         //save Button click Handle
@@ -131,6 +146,7 @@ public class PostDetailActivity extends AppCompatActivity implements Preview.OnF
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
+            bitmap = ((BitmapDrawable) mdImage.getDrawable()).getBitmap();
             dialog = new ProgressDialog(PostDetailActivity.this);
             dialog.setMessage("Saving...");
             dialog.setCancelable(false);
@@ -172,28 +188,20 @@ public class PostDetailActivity extends AppCompatActivity implements Preview.OnF
 
 //                All_Images m = new All_Images(cat, url, downloads, id);
 
-//                Map<String, Object> map = new HashMap<>();
-//                map.put("downloads", downloads);
+                Map<String, Object> map = new HashMap<>();
+                map.put("downloads", downloads);
 
-//                ref.updateChildren(map);
+                ref.updateChildren(map);
 //                ref.setValue(m);
-//                Toast.makeText(PostDetailActivity.this, s, Toast.LENGTH_SHORT).show();
+                Toast.makeText(PostDetailActivity.this, s, Toast.LENGTH_SHORT).show();
+
+                finish();
             }
             else
             {
                 Toast.makeText(PostDetailActivity.this, "Try Again", Toast.LENGTH_SHORT).show();
             }
         }
-    }
-//
-//    private void saveImage() {
-//
-//    }
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-        finish();
     }
 
     @Override
@@ -209,8 +217,6 @@ public class PostDetailActivity extends AppCompatActivity implements Preview.OnF
         }
     }
 
-
-
     public void previewe(String url) {
         // Making notification bar transparent
         if (Build.VERSION.SDK_INT >= 21) {
@@ -221,7 +227,7 @@ public class PostDetailActivity extends AppCompatActivity implements Preview.OnF
             window.setStatusBarColor(Color.TRANSPARENT);
             tb.setVisibility(View.GONE);
         }
-        Preview p = new Preview();
+        ImagePreview p = new ImagePreview();
 
         Bundle b = new Bundle();
         b.putString("passimage", url);
@@ -229,6 +235,12 @@ public class PostDetailActivity extends AppCompatActivity implements Preview.OnF
         p.setArguments(b);
         getSupportFragmentManager().beginTransaction().replace(R.id.layout_fragment, p).addToBackStack(null).commit();
 
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        finish();
     }
 
     @Override

@@ -1,4 +1,4 @@
-package com.negi.ritika.setwallpaper;
+package com.negi.ritika.setwallpaper.Adapters;
 
 /**
  * Created by Ravi Sharma on 21-Dec-17.
@@ -9,9 +9,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+
+import com.negi.ritika.setwallpaper.R;
+import com.negi.ritika.setwallpaper.Models.nature_model;
 
 import java.util.List;
 

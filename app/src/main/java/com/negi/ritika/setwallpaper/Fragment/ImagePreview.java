@@ -1,4 +1,4 @@
-package com.negi.ritika.setwallpaper;
+package com.negi.ritika.setwallpaper.Fragment;
 
 import android.app.WallpaperManager;
 import android.content.Context;
@@ -19,20 +19,21 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.negi.ritika.setwallpaper.R;
 import com.squareup.picasso.Picasso;
 
 
-public class Preview extends Fragment {
+public class ImagePreview extends Fragment {
+
     ImageView img;
     Button setimg;
 
-    // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
 
-    public Preview() {
+    public ImagePreview() {
         // Required empty public constructor
     }
 
@@ -54,20 +55,23 @@ public class Preview extends Fragment {
         img = view.findViewById(R.id.preimg);
         String imgi = getArguments().getString("passimage");
 
-        Picasso.with(getContext()).load(imgi).placeholder(R.drawable.download).into(img);
+        Picasso.with(getContext()).load(imgi).into(img);
         //Glide.with(getContext()).load(imgi).placeholder(R.drawable.download).into(img);
-        Drawable mDrawable = img.getDrawable();
-        final Bitmap mbitmap = ((BitmapDrawable) mDrawable).getBitmap();
 
         setimg = (Button) view.findViewById(R.id.set);
         setimg.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+
+                Drawable mDrawable = img.getDrawable();
+                final Bitmap mbitmap = ((BitmapDrawable) mDrawable).getBitmap();
+
                 WallpaperManager myWallpaperManager = WallpaperManager
                         .getInstance(getContext());
                 try {
                     myWallpaperManager.setBitmap(mbitmap);
                     Toast.makeText(getContext(), "Done ! Set as Wallpaper", Toast.LENGTH_SHORT).show();
+                    getActivity().finish();
                 } catch (Exception e) {
                     Toast.makeText(getContext(), "Sorry ! Something Went wrong", Toast.LENGTH_SHORT).show();
                 }
@@ -102,16 +106,6 @@ public class Preview extends Fragment {
         mListener = null;
     }
 
-    /**
-     * This interface must be implemented by activities that contain this
-     * fragment to allow an interaction in this fragment to be communicated
-     * to the activity and potentially other fragments contained in that
-     * activity.
-     * <p>
-     * See the Android Training lesson <a href=
-     * "http://developer.android.com/training/basics/fragments/communicating.html"
-     * >Communicating with Other Fragments</a> for more information.
-     */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);

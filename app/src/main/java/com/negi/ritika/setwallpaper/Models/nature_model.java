@@ -1,5 +1,7 @@
-package com.negi.ritika.setwallpaper;
+package com.negi.ritika.setwallpaper.Models;
 
+
+import com.negi.ritika.setwallpaper.R;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.negi.ritika.setwallpaper.classData;
+package com.negi.ritika.setwallpaper.Models;
 
 public class User_Images {
     String id;
