@@ -24,9 +24,16 @@ public class LoginActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
 
         auth = FirebaseAuth.getInstance();
+
+        if(auth.getCurrentUser()!=null)
+        {
+            startActivity(new Intent(LoginActivity.this, ProfileActivity.class));
+            finish();
+        }
+
+        setContentView(R.layout.activity_login);
 
         email = (EditText)findViewById(R.id.input_email);
         pass = (EditText)findViewById(R.id.input_password);
@@ -46,8 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         });
     }
 
-    public void loginUser()
-    {
+    public void loginUser() {
         String em = email.getText().toString().trim();
         String ps = pass.getText().toString().trim();
 
@@ -78,6 +84,8 @@ public class LoginActivity extends AppCompatActivity {
                 if(task.isSuccessful())
                 {
                     //send to profile activity
+                    startActivity(new Intent(LoginActivity.this, ProfileActivity.class));
+                    finish();
                 }
                 else
                 {
@@ -91,4 +99,5 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
     }
+
 }

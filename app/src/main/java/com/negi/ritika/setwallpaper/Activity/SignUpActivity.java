@@ -1,5 +1,6 @@
 package com.negi.ritika.setwallpaper.Activity;
 
+import android.app.ProgressDialog;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -89,17 +90,27 @@ public class SignUpActivity extends AppCompatActivity {
             pass.requestFocus();
             return;
         }
+        final ProgressDialog pd = new ProgressDialog(SignUpActivity.this);
+        pd.setCancelable(false);
+        pd.setMessage("Signing Up... Wait...");
+        pd.show();
 
         auth.createUserWithEmailAndPassword(em, ps).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
             public void onComplete(@NonNull Task<AuthResult> task) {
+                pd.dismiss();
                 if(task.isSuccessful())
                 {
                     FirebaseUser user = auth.getCurrentUser();
+
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setDisplayName(nm).build();
                     user.updateProfile(profileUpdates);
+
+                    auth.signOut();
+
                     Toast.makeText(SignUpActivity.this, "Account Created Successfully", Toast.LENGTH_LONG).show();
+
                     finish();
                 }
                 else if(task.getException() instanceof FirebaseAuthUserCollisionException)
@@ -116,6 +127,7 @@ public class SignUpActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Exception e) {
                 Toast.makeText(SignUpActivity.this, "Please Try Again", Toast.LENGTH_LONG).show();
+                pd.dismiss();
             }
         });
     }
