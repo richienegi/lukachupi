@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
@@ -87,16 +88,83 @@ public class ProfileSettingsActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(v);
 
-        AlertDialog ad = builder.create();
+        final AlertDialog ad = builder.create();
         ad.show();
 
-        final EditText ed_pass = (EditText)v.findViewById(R.id.ch_pass);
+        final EditText ed_n_pass = (EditText)v.findViewById(R.id.ch_pass);
+        final EditText ed_email = (EditText)v.findViewById(R.id.email);
+        final EditText ed_o_pass = (EditText)v.findViewById(R.id.old_pass);
         Button sub = (Button)v.findViewById(R.id.submit);
 
         sub.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String pass = ed_pass.getText().toString();
+                final String newpass = ed_n_pass.getText().toString();
+                String email = ed_email.getText().toString();
+                String oldpass = ed_o_pass.getText().toString();
+//scf 28/5 18 d pushpan traders
+                if(email.isEmpty())
+                {
+                    ed_email.setError("Enter Your Email");
+                    ed_email.requestFocus();
+                    return;
+                }
+                if(oldpass.isEmpty())
+                {
+                    ed_o_pass.setError("Enter Your Current Password");
+                    ed_o_pass.requestFocus();
+                    return;
+                }
+                if(newpass.isEmpty())
+                {
+                    ed_n_pass.setError("Enter New Password");
+                    ed_n_pass.requestFocus();
+                    return;
+                }
+                if(!email.equals(auth.getCurrentUser().getEmail()))
+                {
+                    ed_email.setError("Email id is wrong");
+                    ed_email.requestFocus();
+                    return;
+                }
+
+                final ProgressDialog pd = new ProgressDialog(ProfileSettingsActivity.this);
+                pd.setCancelable(false);
+                pd.setMessage("Changing Password... Wait...");
+                pd.show();
+
+                auth.signInWithEmailAndPassword(email, oldpass).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful())
+                        {
+                            FirebaseUser user = auth.getCurrentUser();
+
+                            user.updatePassword(newpass).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if(task.isSuccessful())
+                                    {
+                                        auth.signOut();
+                                        finish();
+                                        Toast.makeText(ProfileSettingsActivity.this, "Password Changed Successfully\n\nLogin Again", Toast.LENGTH_SHORT).show();
+                                    }
+                                    else
+                                    {
+                                        Toast.makeText(ProfileSettingsActivity.this, "Failed"+task.getException().toString(), Toast.LENGTH_SHORT).show();
+                                    }
+                                    pd.dismiss();
+                                    ad.dismiss();
+                                }
+                            });
+                        }
+                        else
+                        {
+                            Toast.makeText(ProfileSettingsActivity.this, "You Entered Wrong Password", Toast.LENGTH_SHORT).show();
+                            finish();
+                        }
+                    }
+                });
             }
         });
     }

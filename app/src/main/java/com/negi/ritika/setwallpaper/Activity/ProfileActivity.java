@@ -5,8 +5,10 @@ import android.content.Intent;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -16,6 +18,10 @@ public class ProfileActivity extends AppCompatActivity {
 
     FirebaseAuth auth;
     TextView id_name;
+    TextView no_posts;
+    TextView no_pend_posts;
+    ImageButton pending_btn, posts_btn;
+    RecyclerView pending_rv, uploads_rv;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,18 +30,22 @@ public class ProfileActivity extends AppCompatActivity {
 
         auth = FirebaseAuth.getInstance();
 
-        id_name = (TextView)findViewById(R.id.username);
+        id_name = (TextView) findViewById(R.id.username);
+        no_pend_posts = (TextView)findViewById(R.id.pending_img);
+        no_posts = (TextView)findViewById(R.id.user_img);
+
+        pending_rv = (RecyclerView)findViewById(R.id.pending_rview);
+        uploads_rv = (RecyclerView)findViewById(R.id.uploads_rview);
+
+
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-        if(auth.getCurrentUser()!=null)
-        {
+        if (auth.getCurrentUser() != null) {
             id_name.setText(auth.getCurrentUser().getDisplayName());
-        }
-        else
-        {
+        } else {
             finish();
         }
     }
@@ -50,8 +60,7 @@ public class ProfileActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        switch (id)
-        {
+        switch (id) {
             case R.id.ch_profile:
                 startActivity(new Intent(ProfileActivity.this, ProfileSettingsActivity.class));
                 break;

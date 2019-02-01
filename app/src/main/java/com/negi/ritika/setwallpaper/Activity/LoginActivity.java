@@ -51,6 +51,17 @@ public class LoginActivity extends AppCompatActivity {
                 startActivity(new Intent(LoginActivity.this, SignUpActivity.class));
             }
         });
+
+        findViewById(R.id.link_forget).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                showResetPasswordDialog();
+            }
+        });
+    }
+
+    private void showResetPasswordDialog() {
+        //need to do code here for password reset
     }
 
     public void loginUser() {
