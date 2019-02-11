@@ -15,6 +15,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.negi.ritika.setwallpaper.ClickListener;
 import com.negi.ritika.setwallpaper.Models.All_Images;
 import com.negi.ritika.setwallpaper.Adapters.PostListAdapter;
 import com.negi.ritika.setwallpaper.R;
@@ -22,7 +23,7 @@ import com.negi.ritika.setwallpaper.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class PostsListActivity extends AppCompatActivity implements PostListAdapter.ClickListener {
+public class PostsListActivity extends AppCompatActivity implements ClickListener {
 
     private ProgressDialog pd;
 

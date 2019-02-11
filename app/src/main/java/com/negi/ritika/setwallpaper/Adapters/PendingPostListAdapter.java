@@ -12,20 +12,20 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.negi.ritika.setwallpaper.ClickListener;
-import com.negi.ritika.setwallpaper.Models.All_Images;
+import com.negi.ritika.setwallpaper.Models.User_Images;
 import com.negi.ritika.setwallpaper.R;
 
 import java.util.List;
 
-public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHolder> {
+public class PendingPostListAdapter extends RecyclerView.Adapter<PendingPostListAdapter.ViewHolder> {
 
     Context c;
     LayoutInflater li;
-    List<All_Images> data;
+    List<User_Images> data;
 
     public ClickListener listener;
 
-    public PostListAdapter(Context c, List<All_Images> data) {
+    public PendingPostListAdapter(Context c, List<User_Images> data) {
         this.c=c;
         li = LayoutInflater.from(c);
         this.data = data;
@@ -34,7 +34,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View v = li.inflate(R.layout.row, parent, false);
+        View v = li.inflate(R.layout.pending, parent, false);
 
         ViewHolder vh = new ViewHolder(v);
         return vh;
@@ -43,7 +43,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 
-        All_Images info = data.get(position);
+        User_Images info = data.get(position);
         holder.setData(position, info);
 
         Glide.with(c)
@@ -52,7 +52,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
                 .into(holder.mImage);
 
 //        Picasso.with(ctx).load(image).placeholder(R.drawable.download).into(mImage);
-        holder.downloads.setText(info.getDownloads());
+        holder.status.setText(info.getStatus());
     }
 
     @Override
@@ -63,16 +63,16 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        public All_Images model;
+        public User_Images model;
         int position;
         ImageView mImage;
-        TextView downloads;
+        TextView status;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             mImage = itemView.findViewById(R.id.rImageView);
-            downloads = itemView.findViewById(R.id.noDown);
+            status = itemView.findViewById(R.id.status);
 
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -91,7 +91,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
 
         }
 
-        public void setData(int position , All_Images model)
+        public void setData(int position , User_Images model)
         {
             this.position = position;
             this.model = model;
