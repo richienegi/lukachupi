@@ -9,6 +9,10 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
@@ -20,6 +24,9 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.negi.ritika.setwallpaper.R;
 
 public class SignUpActivity extends AppCompatActivity {
+
+    private AdView mAdView;
+    private InterstitialAd inter1;
 
     EditText name, email, pass;
 
@@ -35,6 +42,33 @@ public class SignUpActivity extends AppCompatActivity {
         name = (EditText)findViewById(R.id.input_name);
         email = (EditText)findViewById(R.id.input_email);
         pass = (EditText)findViewById(R.id.input_password);
+
+        inter1 = new InterstitialAd(this);
+        inter1.setAdUnitId(getString(R.string.inter_signup));
+        inter1.loadAd(new AdRequest.Builder().build());
+
+        inter1.setAdListener(new AdListener(){
+            @Override
+            public void onAdLoaded() {
+                if(inter1.isLoaded())
+                {
+                    inter1.show();
+                }
+            }
+        });
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.setVisibility(View.GONE);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        mAdView.setAdListener(new AdListener()
+        {
+            @Override
+            public void onAdLoaded() {
+                mAdView.setVisibility(View.VISIBLE);
+            }
+        });
 
         findViewById(R.id.btn_signup).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -106,6 +140,8 @@ public class SignUpActivity extends AppCompatActivity {
                     UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
                             .setDisplayName(nm).build();
                     user.updateProfile(profileUpdates);
+
+                    user.sendEmailVerification();
 
                     auth.signOut();
 

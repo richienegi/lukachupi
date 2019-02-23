@@ -1,13 +1,36 @@
 <resources>
-    <string name="app_name">SetWallPaper</string>
+    <string name="app_name">WallPapers</string>
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 
-    <array name="category">
-        <item>Wildlife</item>
-        <item>Insects</item>
-        <item>Flowers</item>
-        <item>Landscape</item>
-    </array>
+    <!-- AdMob ad unit IDs -->
+    <string name="admob_app_id">ca-app-pub-5013638152042731~9656347998</string>
+
+    <!--Banner ads-->
+    <string name="banner_frag_edit">ca-app-pub-5013638152042731/5243046997</string>
+    <string name="banner_frag_new">ca-app-pub-5013638152042731/4911164064</string>
+    <string name="banner_show_activity">ca-app-pub-5013638152042731/1818096861</string>
+    <string name="banner_show_activity_2">ca-app-pub-5013638152042731/7082865982</string>
+    <string name="banner_profile">ca-app-pub-5013638152042731/9313443504</string>
+    <string name="banner_upload_image">ca-app-pub-5013638152042731/7513400381</string>
+    <string name="banner_login">ca-app-pub-5013638152042731/5258648429</string>
+    <string name="banner_profile_setting">ca-app-pub-5013638152042731/8336237901</string>
+    <string name="banner_signup">ca-app-pub-5013638152042731/4365079597</string>
+    <string name="banner_imagepreview">ca-app-pub-5013638152042731/2133915345</string>
+
+    <!--Interstitial ads-->
+    <string name="inter_editor_1">ca-app-pub-5013638152042731/4937485738</string>
+    <string name="inter_user_1">ca-app-pub-5013638152042731/2283402235</string>
+    <string name="inter_show_post">ca-app-pub-5013638152042731/4670016137</string>
+    <string name="inter_profile_2">ca-app-pub-5013638152042731/4283003326</string>
+    <string name="inter_login">ca-app-pub-5013638152042731/5484404356</string>
+    <string name="inter_signup">ca-app-pub-5013638152042731/7699504151</string>
+    <string name="inter_image_upload">ca-app-pub-5013638152042731/3784309872</string>
+    <string name="inter_show_image">ca-app-pub-5013638152042731/9032767122</string>
+
+    <!--Test Banner unit-->
+    <string name="test_unit">ca-app-pub-3940256099942544/6300978111</string>
+    <string name="test_unit_inter">ca-app-pub-3940256099942544/1033173712</string>
+
 </resources>

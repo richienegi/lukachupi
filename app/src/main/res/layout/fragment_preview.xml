@@ -1,28 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@null"
+    android:background="@color/background_color"
     tools:context=".Fragment.ImagePreview">
-<Button
-    android:layout_marginTop="10dp"
-    android:id="@+id/set"
-    android:textColor="	#FFFFFF"
-    android:textSize="22dp"
-    android:textStyle="bold|italic"
-    android:paddingStart="20dp"
-    android:textAlignment="textStart"
-     android:text="Set as wallPaper"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:background="#c9c2c2"/>
-    <!-- TODO: Update blank fragment layout -->
-   <ImageView
 
-       android:id="@+id/preimg"
-       android:layout_width="match_parent"
-       android:layout_height="match_parent"
-       />
+    <ProgressBar
+        android:id="@+id/progress"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_centerHorizontal="true"
+        android:layout_centerVertical="true"
+        android:background="@drawable/circle_shape"
+        android:indeterminate="false"
+        android:max="100"
+        android:progress="0"
+        android:progressDrawable="@drawable/circular_progress_bar" />
 
-</FrameLayout>
+    <Button
+        android:id="@+id/set"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:alpha="0.6"
+        android:background="@color/colorAccent"
+        android:text="Set as wallPaper"
+        android:textAlignment="center"
+        android:textColor="@color/tab_selected"
+        android:textSize="22dp"
+        android:textStyle="bold" />
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/set"
+        android:layout_centerHorizontal="true"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_imagepreview">
+    </com.google.android.gms.ads.AdView>
+
+    <ImageView
+        android:layout_above="@id/adView"
+        android:id="@+id/preimg"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+</RelativeLayout>

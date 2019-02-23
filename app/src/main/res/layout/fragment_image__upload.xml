@@ -1,47 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:ads="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:background="#fff"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:weightSum="1"
+    android:background="@color/background_color"
     tools:context=".Fragment.Image_Upload">
 
     <LinearLayout
-        android:orientation="vertical"
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
         <TextView
-            android:textSize="20dp"
-            android:textColor="@color/button"
-            android:gravity="center"
-            android:text="Your Images will Appear after Approval"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-        <Button
-            android:layout_marginTop="20dp"
-            android:id="@+id/browse"
-            android:background="@drawable/button"
-            android:text="Browse"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <Spinner
-            android:layout_marginTop="10dp"
-            android:id="@+id/spinner"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:entries="@array/category"></Spinner>
+            android:gravity="center"
+            android:text="Your Images will Appear after Approval"
+            android:textColor="@color/tab_selected"
+            android:textSize="20dp" />
+
+        <Button
+            android:id="@+id/browse"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="20dp"
+            android:background="@color/colorAccent"
+            android:text="Browse"
+            android:textColor="@color/tab_selected" />
 
         <android.support.v7.widget.RecyclerView
-            android:layout_marginTop="10dp"
             android:id="@+id/uploadlist"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="match_parent"
+            android:layout_marginTop="10dp">
 
         </android.support.v7.widget.RecyclerView>
 
-
     </LinearLayout>
+
+    <com.google.android.gms.ads.AdView
+        android:id="@+id/adView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="5dp"
+        ads:adSize="BANNER"
+        ads:adUnitId="@string/banner_upload_image" />
 
 </LinearLayout>

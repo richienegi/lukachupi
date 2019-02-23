@@ -1,38 +1,47 @@
 package com.negi.ritika.setwallpaper.Activity;
 
 import android.content.Intent;
+import android.support.design.widget.TabLayout;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import android.support.v7.widget.DefaultItemAnimator;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.negi.ritika.setwallpaper.Fragment.EditorsFragment;
+import com.negi.ritika.setwallpaper.Fragment.NewImagesFragment;
 import com.negi.ritika.setwallpaper.R;
-import com.negi.ritika.setwallpaper.Adapters.my_adapter;
-import com.negi.ritika.setwallpaper.Models.nature_model;
 
-//add two dependency recycler view and card view
-public class MainActivity extends AppCompatActivity implements my_adapter.RecylerListener {
 
-    String category="";
-    RecyclerView rv;
+public class MainActivity extends AppCompatActivity {
+
+    TabLayout tabLayout;
+    ViewPager viewPager;
+    ViewPagerAdapter viewPagerAdapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState)
-    {
+    protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        rv = (RecyclerView)findViewById(R.id.rview);
-        my_adapter myadpt = new my_adapter(this, nature_model.getObjectList());
-        myadpt.setOnClick(this);
-        rv.setAdapter(myadpt);
-        LinearLayoutManager lm = new LinearLayoutManager(this);//to show card view, recycler View
-        lm.setOrientation(LinearLayoutManager.VERTICAL);
-        rv.setLayoutManager(lm);
-        rv.setItemAnimator(new DefaultItemAnimator());//
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
+        tabLayout = (TabLayout)findViewById(R.id.tab_layout);
+        viewPager = (ViewPager)findViewById(R.id.viewPager);
+
+        viewPagerAdapter = new ViewPagerAdapter(getSupportFragmentManager());
+        viewPager.setAdapter(viewPagerAdapter);
+
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(viewPager));
+        viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
     }
 
     @Override
@@ -43,39 +52,35 @@ public class MainActivity extends AppCompatActivity implements my_adapter.Recyle
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-        switch (id)
-        {
-            case R.id.profile:
-                startActivity(new Intent(MainActivity.this, LoginActivity.class));
-                break;
-        }
-
-        return super.onOptionsItemSelected(item);
+        Intent i = new Intent(this, LoginActivity.class);
+        startActivity(i);
+        return true;
     }
 
-    @Override
-    public void Onlick(int poistion) {
-        switch (poistion)
-        {
-            case 0:
-                category="Wildlife";
-                break;
-            case 1:
-                category="Insects";
-                break;
-            case 2:
-               category="Flowers";
-               break;
-            case 3:
-                category="Landscape";
-                break;
-
-
+    public class ViewPagerAdapter extends FragmentPagerAdapter
+    {
+        public ViewPagerAdapter(FragmentManager fm) {
+            super(fm);
         }
-        Intent i=new Intent(MainActivity.this,PostsListActivity.class);
-        i.putExtra("categ",category);
-        startActivity(i);
+
+        @Override
+        public Fragment getItem(int i) {
+            Fragment fragment = null;
+            switch (i)
+            {
+                case 0:
+                    fragment = new EditorsFragment();
+                    break;
+                case 1:
+                    fragment = new NewImagesFragment();
+                    break;
+            }
+            return fragment;
+        }
+
+        @Override
+        public int getCount() {
+            return 2;
+        }
     }
 }

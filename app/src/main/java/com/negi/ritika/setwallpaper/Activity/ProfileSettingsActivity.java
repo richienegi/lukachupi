@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -21,6 +24,8 @@ import com.negi.ritika.setwallpaper.R;
 
 public class ProfileSettingsActivity extends AppCompatActivity {
 
+    private AdView mAdView;
+
     FirebaseAuth auth;
 
     @Override
@@ -29,6 +34,19 @@ public class ProfileSettingsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_profile_settings);
 
         auth = FirebaseAuth.getInstance();
+
+        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.setVisibility(View.GONE);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        mAdView.setAdListener(new AdListener()
+        {
+            @Override
+            public void onAdLoaded() {
+                mAdView.setVisibility(View.VISIBLE);
+            }
+        });
 
     }
 
@@ -102,7 +120,7 @@ public class ProfileSettingsActivity extends AppCompatActivity {
                 final String newpass = ed_n_pass.getText().toString();
                 String email = ed_email.getText().toString();
                 String oldpass = ed_o_pass.getText().toString();
-//scf 28/5 18 d pushpan traders
+
                 if(email.isEmpty())
                 {
                     ed_email.setError("Enter Your Email");

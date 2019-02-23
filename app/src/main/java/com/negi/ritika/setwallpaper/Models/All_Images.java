@@ -1,59 +1,52 @@
 package com.negi.ritika.setwallpaper.Models;
 
 public class All_Images {
-
     String id;
-    String url;
-    String likes;
-    String downloads;
-    String time;
-    String category;
     String uid;
-    String name;
-
-    public All_Images(String id, String url, String likes, String downloads, String time, String category, String uid, String name) {
-        this.id = id;
-        this.url = url;
-        this.likes = likes;
-        this.downloads = downloads;
-        this.time = time;
-        this.category = category;
-        this.uid = uid;
-        this.name = name;
-    }
+    String owner;
+    String downloads;
+    String date;
+    String imageUrl;
+    String thumb;
 
     public All_Images() {
+    }
+
+    public All_Images(String id, String uid, String owner, String downloads, String date, String imageUrl, String thumb) {
+        this.id = id;
+        this.uid = uid;
+        this.owner = owner;
+        this.downloads = downloads;
+        this.date = date;
+        this.imageUrl = imageUrl;
+        this.thumb = thumb;
     }
 
     public String getId() {
         return id;
     }
 
-    public String getUrl() {
-        return url;
+    public String getUid() {
+        return uid;
     }
 
-    public String getLikes() {
-        return likes;
+    public String getOwner() {
+        return owner;
     }
 
     public String getDownloads() {
         return downloads;
     }
 
-    public String getTime() {
-        return time;
+    public String getDate() {
+        return date;
     }
 
-    public String getCategory() {
-        return category;
+    public String getImageUrl() {
+        return imageUrl;
     }
 
-    public String getUid() {
-        return uid;
-    }
-
-    public String getName() {
-        return name;
+    public String getThumb() {
+        return thumb;
     }
 }

@@ -1,15 +1,15 @@
 package com.negi.ritika.setwallpaper.Activity;
 
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.support.v7.app.AlertDialog;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.StaggeredGridLayoutManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -18,17 +18,26 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.negi.ritika.setwallpaper.Adapters.PendingPostListAdapter;
 import com.negi.ritika.setwallpaper.Adapters.PostListAdapter;
 import com.negi.ritika.setwallpaper.ClickListener;
 import com.negi.ritika.setwallpaper.Constants;
 import com.negi.ritika.setwallpaper.Fragment.Image_Upload;
+import com.negi.ritika.setwallpaper.Fragment.ShowImage;
 import com.negi.ritika.setwallpaper.Models.All_Images;
 import com.negi.ritika.setwallpaper.Models.User_Images;
 import com.negi.ritika.setwallpaper.R;
@@ -36,7 +45,10 @@ import com.negi.ritika.setwallpaper.R;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProfileActivity extends AppCompatActivity implements ClickListener {
+public class ProfileActivity extends AppCompatActivity implements ClickListener, PendingPostListAdapter.PendingClickListener {
+
+    private AdView mAdView;
+    private InterstitialAd inter2;
 
     TextView id_name;
     TextView no_posts;
@@ -57,8 +69,24 @@ public class ProfileActivity extends AppCompatActivity implements ClickListener 
 
         auth = FirebaseAuth.getInstance();
 
-        posts = FirebaseDatabase.getInstance().getReference(Constants.DATABASE_PATH_UPLOADS);
-        pending = FirebaseDatabase.getInstance().getReference(Constants.DATABASE_PATH_REQUEST);
+        mAdView = (AdView) findViewById(R.id.adView);
+        mAdView.setVisibility(View.GONE);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        mAdView.setAdListener(new AdListener() {
+            @Override
+            public void onAdLoaded() {
+                mAdView.setVisibility(View.VISIBLE);
+            }
+        });
+
+        inter2 = new InterstitialAd(this);
+        inter2.setAdUnitId(getString(R.string.inter_profile_2));
+        inter2.loadAd(new AdRequest.Builder().build());
+
+        posts = FirebaseDatabase.getInstance().getReference(Constants.DATABASE_PATH_UPLOADS).child(auth.getCurrentUser().getUid());
+        pending = FirebaseDatabase.getInstance().getReference(Constants.DATABASE_PATH_REQUEST).child(auth.getCurrentUser().getUid());
 
         id_name = (TextView) findViewById(R.id.username);
         no_pend_posts = (TextView) findViewById(R.id.pending_img);
@@ -71,10 +99,11 @@ public class ProfileActivity extends AppCompatActivity implements ClickListener 
         post_images = new ArrayList<>();
         requested_images = new ArrayList<>();
 
-        StaggeredGridLayoutManager layoutManager = new StaggeredGridLayoutManager(2, 1);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
-        GridLayoutManager layoutManager2 = new GridLayoutManager(this, 2);
-        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        GridLayoutManager layoutManager2 = new GridLayoutManager(this, 3);
+        layoutManager2.setOrientation(LinearLayoutManager.VERTICAL);
+        GridLayoutManager layoutManager = new GridLayoutManager(this, 3);
+        layoutManager2.setOrientation(LinearLayoutManager.VERTICAL);
+
         pending_rv.setLayoutManager(layoutManager);
         uploads_rv.setLayoutManager(layoutManager2);
 
@@ -109,23 +138,14 @@ public class ProfileActivity extends AppCompatActivity implements ClickListener 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 requested_images.clear();
-                for (DataSnapshot ds1 : dataSnapshot.getChildren()) {
-                    for (DataSnapshot ds2 : ds1.getChildren()) {
-//                        Log.d("CHECKING", ds2.getKey());
-                        if (ds2.getKey().equals(auth.getCurrentUser().getUid())) {
-                            for (DataSnapshot ds3 : ds2.getChildren()) {
-//                                Log.d("CHECKING", ds3.getKey());
-                                User_Images um = ds3.getValue(User_Images.class);
-                                requested_images.add(um);
-                            }
-                        }
-                    }
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    User_Images images = ds.getValue(User_Images.class);
+                    requested_images.add(images);
                 }
-                PendingPostListAdapter ad = new PendingPostListAdapter(ProfileActivity.this, requested_images);
-                ad.setOnClick(ProfileActivity.this);
-                pending_rv.setAdapter(ad);
                 no_pend_posts.setText(String.valueOf(requested_images.size()));
-//                Toast.makeText(ProfileActivity.this, ""+requested_images.size(), Toast.LENGTH_SHORT).show();
+                PendingPostListAdapter ad = new PendingPostListAdapter(ProfileActivity.this, requested_images, getFragmentManager());
+                ad.setListener(ProfileActivity.this);
+                pending_rv.setAdapter(ad);
             }
 
             @Override
@@ -138,22 +158,14 @@ public class ProfileActivity extends AppCompatActivity implements ClickListener 
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 post_images.clear();
-                for (DataSnapshot ds1 : dataSnapshot.getChildren()) {
-                    for (DataSnapshot ds2 : ds1.getChildren()) {
-//                        Log.d("CHECKING", ds2.getKey());
-                        if (ds2.getKey().equals(auth.getCurrentUser().getUid())) {
-                            for (DataSnapshot ds3 : ds2.getChildren()) {
-//                                Log.d("CHECKING", ds3.getKey());
-                                All_Images um = ds3.getValue(All_Images.class);
-                                post_images.add(um);
-                            }
-                        }
-                    }
+                for (DataSnapshot ds : dataSnapshot.getChildren()) {
+                    All_Images images = ds.getValue(All_Images.class);
+                    post_images.add(images);
                 }
+                no_posts.setText(String.valueOf(post_images.size()));
                 PostListAdapter ad = new PostListAdapter(ProfileActivity.this, post_images);
                 ad.setOnClick(ProfileActivity.this);
                 uploads_rv.setAdapter(ad);
-                no_posts.setText(String.valueOf(post_images.size()));
             }
 
             @Override
@@ -169,7 +181,9 @@ public class ProfileActivity extends AppCompatActivity implements ClickListener 
         RelativeLayout rl = findViewById(R.id.container);
         if (rl.getVisibility() == View.VISIBLE) {
             rl.setVisibility(View.GONE);
+            return;
         }
+        inter2.show();
     }
 
     @Override
@@ -233,11 +247,115 @@ public class ProfileActivity extends AppCompatActivity implements ClickListener 
 
     @Override
     public void onItemClick(View view, int position) {
-        Toast.makeText(this, "hello222", Toast.LENGTH_SHORT).show();
+        RelativeLayout rl = findViewById(R.id.container);
+        rl.setVisibility(View.VISIBLE);
+
+        ShowImage im = new ShowImage();
+        Bundle b = new Bundle();
+        b.putString("url", post_images.get(position).getThumb());
+        im.setArguments(b);
+        getFragmentManager().beginTransaction().replace(R.id.container, im).addToBackStack(null).commit();
     }
 
     @Override
-    public void onItemLongClick(View view, int position) {
+    public void onItemLongClick(View view, final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Image");
+        builder.setMessage("Do you want to Delete this image?");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deleteImage(position);
+                dialog.dismiss();
+            }
+        });
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
 
+        AlertDialog ad = builder.create();
+        ad.show();
+    }
+
+    @Override
+    public void onPendingItemClick(View v, int position) {
+        RelativeLayout rl = findViewById(R.id.container);
+        rl.setVisibility(View.VISIBLE);
+
+        ShowImage im = new ShowImage();
+        Bundle b = new Bundle();
+        b.putString("url", requested_images.get(position).getThumb());
+        im.setArguments(b);
+        getFragmentManager().beginTransaction().replace(R.id.container, im).addToBackStack(null).commit();
+    }
+
+    @Override
+    public void onPendingItemLongClick(View v, final int position) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Image");
+        builder.setMessage("Do you want to Delete this image?");
+        builder.setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                deletePendingImage(position);
+                dialog.dismiss();
+            }
+        });
+        builder.setNeutralButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.dismiss();
+            }
+        });
+
+        AlertDialog ad = builder.create();
+        ad.show();
+    }
+
+    private void deleteImage(int position) {
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMessage("Deleting...");
+        pd.setCancelable(false);
+        pd.show();
+        final All_Images ui = post_images.get(position);
+        final StorageReference rf2 = FirebaseStorage.getInstance().getReferenceFromUrl(ui.getThumb());
+        StorageReference rf = FirebaseStorage.getInstance().getReferenceFromUrl(ui.getImageUrl());
+        rf.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    rf2.delete();
+                    posts.child(ui.getId()).removeValue();
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Deletion Failed", Toast.LENGTH_SHORT).show();
+                }
+                pd.dismiss();
+            }
+        });
+    }
+
+    private void deletePendingImage(int position) {
+        final ProgressDialog pd = new ProgressDialog(this);
+        pd.setMessage("Deleting...");
+        pd.setCancelable(false);
+        pd.show();
+        final User_Images ui = requested_images.get(position);
+        final StorageReference rf2 = FirebaseStorage.getInstance().getReferenceFromUrl(ui.getThumb());
+        StorageReference rf = FirebaseStorage.getInstance().getReferenceFromUrl(ui.getImageUrl());
+        rf.delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    rf2.delete();
+                    pending.child(ui.getId()).removeValue();
+                } else {
+                    Toast.makeText(ProfileActivity.this, "Deletion Failed", Toast.LENGTH_SHORT).show();
+                }
+                pd.dismiss();
+            }
+        });
     }
 }

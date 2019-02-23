@@ -12,25 +12,27 @@
         android:orientation="vertical">
 
         <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:layout_margin="4dp"
             android:text="Change Your Name"
-            android:textSize="20dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/ch_name"
-            android:hint="Enter New Name Here"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="10dp" />
+            android:layout_margin="10dp"
+            android:hint="Enter New Name Here" />
 
         <Button
             android:id="@+id/submit"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:text="Submit" />
+            android:background="@color/colorAccent"
+            android:text="Submit"
+            android:textColor="@color/tab_selected" />
 
     </LinearLayout>
 

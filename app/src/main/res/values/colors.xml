@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#ec8813</color>
-    <color name="colorPrimaryDark">#c78538</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorPrimary">#202020</color>
+    <color name="colorPrimaryDark">#202020</color>
+    <color name="colorAccent">#0599B3</color>
 
-    <color name="button">#F15313</color>
+    <color name="tab_selected">#ffffff</color>
+    <color name="background_color">#202020</color>
+
 </resources>

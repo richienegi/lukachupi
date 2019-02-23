@@ -16,17 +16,25 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
+import com.bumptech.glide.request.RequestOptions;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.negi.ritika.setwallpaper.GlideImageLoader;
 import com.negi.ritika.setwallpaper.R;
-import com.squareup.picasso.Picasso;
 
 
 public class ImagePreview extends Fragment {
+    private AdView mAdView;
 
     ImageView img;
     Button setimg;
+    ProgressBar pb;
 
     private String mParam1;
     private String mParam2;
@@ -53,10 +61,29 @@ public class ImagePreview extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_preview, container, false);
         img = view.findViewById(R.id.preimg);
+        pb = view.findViewById(R.id.progress);
+
+        mAdView = (AdView) view.findViewById(R.id.adView);
+        mAdView.setVisibility(View.GONE);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+
+        mAdView.setAdListener(new AdListener()
+        {
+            @Override
+            public void onAdLoaded() {
+                mAdView.setVisibility(View.VISIBLE);
+            }
+        });
+
+
         String imgi = getArguments().getString("passimage");
 
-        Picasso.with(getContext()).load(imgi).into(img);
-        //Glide.with(getContext()).load(imgi).placeholder(R.drawable.download).into(img);
+        RequestOptions options = new RequestOptions()
+                .fitCenter()
+                .priority(Priority.HIGH);
+
+        new GlideImageLoader(img, pb).load(imgi,options);
 
         setimg = (Button) view.findViewById(R.id.set);
         setimg.setOnClickListener(new View.OnClickListener() {

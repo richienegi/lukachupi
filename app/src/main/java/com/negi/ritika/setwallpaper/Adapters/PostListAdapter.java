@@ -7,11 +7,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.ProgressBar;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
+import com.bumptech.glide.request.RequestOptions;
 import com.negi.ritika.setwallpaper.ClickListener;
+import com.negi.ritika.setwallpaper.GlideImageLoader;
 import com.negi.ritika.setwallpaper.Models.All_Images;
 import com.negi.ritika.setwallpaper.R;
 
@@ -27,7 +30,7 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
 
     public PostListAdapter(Context c, List<All_Images> data) {
         this.c=c;
-        li = LayoutInflater.from(c);
+        li = (LayoutInflater)c.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         this.data = data;
     }
 
@@ -45,14 +48,14 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
 
         All_Images info = data.get(position);
         holder.setData(position, info);
+        holder.pb.setVisibility(View.VISIBLE);
+        holder.pb.setProgress(0);
 
-        Glide.with(c)
-                .load(info.getUrl())
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(holder.mImage);
+        RequestOptions options = new RequestOptions()
+                .fitCenter()
+                .priority(Priority.HIGH);
 
-//        Picasso.with(ctx).load(image).placeholder(R.drawable.download).into(mImage);
-        holder.downloads.setText(info.getDownloads());
+        new GlideImageLoader(holder.mImage, holder.pb).load(info.getThumb(),options);
     }
 
     @Override
@@ -66,14 +69,13 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
         public All_Images model;
         int position;
         ImageView mImage;
-        TextView downloads;
+        ProgressBar pb;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             mImage = itemView.findViewById(R.id.rImageView);
-            downloads = itemView.findViewById(R.id.noDown);
-
+            pb = itemView.findViewById(R.id.progress);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -98,9 +100,9 @@ public class PostListAdapter extends RecyclerView.Adapter<PostListAdapter.ViewHo
         }
     }
 
-    public void setOnClick(ClickListener onClick)
-    {
-        this.listener=onClick;
+
+    public void setOnClick(ClickListener onClick) {
+        this.listener = onClick;
     }
 
 }
