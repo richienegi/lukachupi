@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.negi.ritika.setwallpaper">
+    package="com.negi.wallpapers.setwallpaper">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -9,7 +9,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
 
     <application
-        android:name=".MyApplication"
+        android:name="com.negi.wallpapers.setwallpaper.MyApplication"
         android:allowBackup="true"
         android:icon="@drawable/app_logo"
         android:hardwareAccelerated="true"
@@ -17,11 +17,11 @@
         android:roundIcon="@drawable/app_logo"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".Activity.ProfileSettingsActivity"></activity>
-        <activity android:name=".Activity.ProfileActivity" />
-        <activity android:name=".Activity.SignUpActivity" />
-        <activity android:name=".Activity.LoginActivity" />
-        <activity android:name=".Activity.MainActivity"
+        <activity android:name="com.negi.wallpapers.setwallpaper.Activity.ProfileSettingsActivity"></activity>
+        <activity android:name="com.negi.wallpapers.setwallpaper.Activity.ProfileActivity" />
+        <activity android:name="com.negi.wallpapers.setwallpaper.Activity.SignUpActivity" />
+        <activity android:name="com.negi.wallpapers.setwallpaper.Activity.LoginActivity" />
+        <activity android:name="com.negi.wallpapers.setwallpaper.Activity.MainActivity"
             android:theme="@style/postdetail">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -30,7 +30,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Activity.ShowPostActivity"
+            android:name="com.negi.wallpapers.setwallpaper.Activity.ShowPostActivity"
             android:theme="@style/postdetail" />
     </application>
 
